@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-BEGIN { require 5.6.2; }
+BEGIN { require 5.6.0; }
 
 use ExtUtils::MakeMaker 6.31;
 
@@ -28,7 +28,7 @@ my %WriteMakefileArgs = (
     'Test::More' => '0',
     'XSLoader' => '0'
   },
-  'VERSION' => '0.13',
+  'VERSION' => '0.14',
   'test' => {
     'TESTS' => 't/*.t'
   }

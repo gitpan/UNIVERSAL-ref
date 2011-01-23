@@ -1,6 +1,6 @@
 package UNIVERSAL::ref;
 BEGIN {
-  $UNIVERSAL::ref::VERSION = '0.13';
+  $UNIVERSAL::ref::VERSION = '0.14';
 }
 use strict;
 use warnings;
