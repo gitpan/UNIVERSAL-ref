@@ -1,4 +1,7 @@
 package UNIVERSAL::ref;
+BEGIN {
+  $UNIVERSAL::ref::VERSION = '0.13';
+}
 use strict;
 use warnings;
 use B::Utils;
@@ -20,10 +23,10 @@ sub unimport {
 my $DOES;
 BEGIN { $DOES = UNIVERSAL->can('DOES') ? 'DOES' : 'isa' }
 
-sub hook {
+sub _hook {
 
     # Below, you'll see that there is special dispensation for never
-    # hooking the function named UNIVERSAL::ref::hook. That's why this
+    # hooking the function named UNIVERSAL::ref::_hook. That's why this
     # ref() is safe from predation by this module.
 
     # Is this object asserting that it is an ancestor of any hooked class?
@@ -59,10 +62,9 @@ sub hook {
     return $obj_class;
 }
 
-our $VERSION = '0.12';
 use XSLoader;
 $| = 1;
-XSLoader::load( 'UNIVERSAL::ref', $VERSION );
+XSLoader::load( 'UNIVERSAL::ref', $UNIVERSAL::ref::VERSION );
 
 use B 'svref_2object';
 use B::Utils 'all_roots';
@@ -71,7 +73,7 @@ for my $nm ( sort keys %roots ) {
     my $op = $roots{$nm};
 
     next unless $$op;
-    next if $nm eq 'UNIVERSAL::ref::hook';
+    next if $nm eq 'UNIVERSAL::ref::_hook';
 
     if ( defined &$nm ) {
         my $cv = svref_2object( \&$nm );
@@ -79,7 +81,7 @@ for my $nm ( sort keys %roots ) {
         next unless ${ $cv->START };
     }
 
-    fixupop($op);
+    _fixupop($op);
 }
 
 no warnings;
@@ -130,6 +132,26 @@ class. Here is a sample proxy module.
 
 Anywhere you call C<ref($obj)> on a C<Pirate> object, it will allow
 C<Pirate> to lie and pretend to be something else.
+
+=head1 METHODS
+
+=over
+
+=item import
+
+A pragma for ref()-enabling your class. This adds the calling class
+name to a global list of ref()-enabled classes.
+
+    package YourClass;
+    use UNIVERSAL::ref;
+    sub ref { ... }
+
+=item unimport
+
+A pragma for ref()-disabling your class. This removes the calling
+class name from a global list of ref()-enabled classes.
+
+=back
 
 =head1 TODO
 
